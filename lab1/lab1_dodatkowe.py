@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
-from scipy.stats import zscore
 
 matplotlib.use("Agg")
 
@@ -135,8 +134,12 @@ print(f"struktura hierarchii:\n{hierarchy_dict}\n")
 
 
 # wykrycie nietypowych cen metoda zscore (1.5)
-df["price_zscore"] = zscore(df["unit_price"])
-outliers = df[df["price_zscore"].abs() > 3]
+mean_price = df["unit_price"].mean()
+std_price = df["unit_price"].std(ddof=0)
+
+df["price_zscore"] = (df["unit_price"] - mean_price) / std_price
+
+outliers = df[df["price_zscore"].abs() > 1.5]
 
 print(f"nietypowe ceny:\n{outliers[['product_name','unit_price','price_zscore']]}\n")
 
